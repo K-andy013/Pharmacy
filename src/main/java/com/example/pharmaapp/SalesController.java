@@ -16,18 +16,15 @@ import com.example.pharmaapp.entities.Sale;
 import com.example.pharmaapp.utils.ReportGenerator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -220,8 +217,8 @@ public class SalesController implements Initializable {
 
 
 
-    @FXML
-    private void handleUndoDeleteButton(ActionEvent event) {
+//    @FXML
+//    private void handleUndoDeleteButton(ActionEvent event) {
 //        Drug selectedDrug = drugsTable.getSelectionModel().getSelectedItem();
 //        if (selectedDrug == null) {
 //            // Delete the drug from the database
@@ -238,7 +235,7 @@ public class SalesController implements Initializable {
 //            drugList.add(selectedDrug);
 //            drugsTable.getItems().add(selectedDrug);
 //        }
-    }
+//    }
 
 
 

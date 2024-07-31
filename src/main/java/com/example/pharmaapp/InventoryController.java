@@ -1,15 +1,14 @@
 package com.example.pharmaapp;
 
 
+import com.example.pharmaapp.entities.Action;
 import com.example.pharmaapp.entities.Drug;
 import com.example.pharmaapp.database.sql.dbConnection;
+import com.example.pharmaapp.entities.UndoManager;
 import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -17,13 +16,11 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.Objects;
+
 import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -101,6 +98,13 @@ public class InventoryController implements Initializable {
     private TextField searchField;
 
 
+    @FXML
+    private JFXButton deleteButton;
+
+
+
+    @FXML
+    private JFXButton undoButton;
 
 
 
@@ -130,7 +134,7 @@ public class InventoryController implements Initializable {
             // Database connection and data retrieval
             try (Connection conn = dbConnection.getConnection();
                  Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM drugs ")) {
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM drugs where deleted = 0 ")) {
 
                 while (rs.next()) {
                    int drugID = rs.getInt("drugID");
@@ -153,33 +157,6 @@ public class InventoryController implements Initializable {
             drugsTable.refresh();
     }
 
-//    @FXML
-//    private void addButtonClicked(ActionEvent event) {
-//        String drugName = drugNameField.getText();
-//        double unitPrice = Double.parseDouble(unitPriceField.getText());
-//        int numOfUnits = Integer.parseInt(numOfUnitsField.getText());
-//        String description = descriptionField.getText();
-//        String supplierName = supplierNameField.getText();
-//        String supplierLocation = supplierLocationField.getText();
-//        String supplierContactInfo = supplierContactInfoField.getText();
-//
-//        addDrugToDatabase(drugName, unitPrice, numOfUnits, description, supplierName);
-//        addSupplierToDatabase(supplierName,supplierContactInfo,supplierLocation);
-//
-//        drugNameField.clear();
-//        unitPriceField.clear();
-//        numOfUnitsField.clear();
-//        descriptionField.clear();
-//        supplierNameField.clear();
-//        supplierLocationField.clear();
-//        supplierContactInfoField.clear();
-//        supplierNameField.clear();
-//
-//        // Refresh table view
-//        loadDrugData();
-//    }
-
-
     @FXML
     /**
      // Adds drug to system and database
@@ -189,40 +166,45 @@ public class InventoryController implements Initializable {
      *
      */
     private void addButtonClicked(ActionEvent event) {
-        String drugName = drugNameField.getText();
-        String unitPriceStr = unitPriceField.getText();
-        String numOfUnitsStr = numOfUnitsField.getText();
-        String description = descriptionField.getText();
-        String supplierName = supplierNameField.getText();
-        String supplierLocation = supplierLocationField.getText();
-        String supplierContactInfo = supplierContactInfoField.getText(); //Retrieves the text typed in the fields of application
 
-        if (drugName.isEmpty() || unitPriceStr.isEmpty() || numOfUnitsStr.isEmpty() || description.isEmpty() || supplierName.isEmpty() || supplierLocation.isEmpty() || supplierContactInfo.isEmpty()) {
-            errorLabel.setText("Invalid Entry");
-            errorLabel.setVisible(true);
-            return;
+            String drugName = drugNameField.getText();
+            String unitPriceStr = unitPriceField.getText();
+            String numOfUnitsStr = numOfUnitsField.getText();
+            String description = descriptionField.getText();
+            String supplierName = supplierNameField.getText();
+            String supplierLocation = supplierLocationField.getText();
+            String supplierContactInfo = supplierContactInfoField.getText(); //Retrieves the text typed in the fields of application
+
+            if (drugName.isEmpty() || unitPriceStr.isEmpty() || numOfUnitsStr.isEmpty() || description.isEmpty() || supplierName.isEmpty() || supplierLocation.isEmpty() || supplierContactInfo.isEmpty()) {
+                errorLabel.setText("Invalid Entry");
+                errorLabel.setVisible(true);
+                return;
+            }
+            else if (!phoneNumValidator(supplierContactInfo)){
+                sellErrorLabel.setText("Invalid Phone number");
+                sellErrorLabel.setVisible(true);
+                return;
+            }
+            double unitPrice = Double.parseDouble(unitPriceStr);
+            int numOfUnits = Integer.parseInt(numOfUnitsStr);
+
+            addDrugToDatabase(drugName, unitPrice, numOfUnits, description, supplierName);
+            addSupplierToDatabase(supplierName, supplierContactInfo, supplierLocation);
+
+            drugNameField.clear();
+            unitPriceField.clear();
+            numOfUnitsField.clear();
+            descriptionField.clear();
+            supplierNameField.clear();
+            supplierLocationField.clear();
+            supplierContactInfoField.clear();
+
+            errorLabel.setText("");
+            errorLabel.setVisible(false);
+
+            // Refresh table view
+            loadDrugData();
         }
-
-        double unitPrice = Double.parseDouble(unitPriceStr);
-        int numOfUnits = Integer.parseInt(numOfUnitsStr);
-
-        addDrugToDatabase(drugName, unitPrice, numOfUnits, description, supplierName);
-        addSupplierToDatabase(supplierName, supplierContactInfo, supplierLocation);
-
-        drugNameField.clear();
-        unitPriceField.clear();
-        numOfUnitsField.clear();
-        descriptionField.clear();
-        supplierNameField.clear();
-        supplierLocationField.clear();
-        supplierContactInfoField.clear();
-
-        errorLabel.setText("");
-        errorLabel.setVisible(false);
-
-        // Refresh table view
-        loadDrugData();
-    }
 
 
 
@@ -262,26 +244,6 @@ public class InventoryController implements Initializable {
     }
 
 
-
-//    public void writeToFile() {
-//        BufferedWriter writer = null;
-//        try {
-//            string
-//            writer = new BufferedWriter(new FileWriter("C:\\Users\\Eli\\IdeaProjects\\PharmaApp\\Sales.txt",true));
-//            writer.write(temp.toString());
-//            writer.newLine();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (writer != null) {
-//                try {
-//                    writer.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }}}
-//
-//    }
 
     /**
      // Adds drug to database
@@ -488,6 +450,98 @@ else if (!phoneNumValidator(customerPhoneNo)){
         }
     }
 
+
+
+    @FXML
+    private void deleteButtonClicked(ActionEvent event) {
+        Action delDrugAction=new deleteDrugAction();
+        UndoManager x =new UndoManager();
+        x.performAction(delDrugAction,event);
+        for(Action i:UndoManager.actionStack){System.out.println(i);}
+    }
+
+    class deleteDrugAction implements Action {
+
+
+        String drugName;
+        Double unitPrice;
+        int numOfUnits;
+        String description;
+        String supplierName;
+
+        /**
+         * @param e
+         */
+        @Override
+        public void execute(ActionEvent e) {deleteDrug(e);
+
+
+        }
+
+
+        /**
+         * @param e
+         */
+        @Override
+        public void undo(ActionEvent e) {
+            reAddDrug(e);
+
+
+            // Refresh table view
+            loadDrugData();
+        }
+
+
+        public void reAddDrug(ActionEvent e) {
+
+            addDrugToDatabase(drugName, unitPrice, numOfUnits, description, supplierName);
+
+            // Refresh table view
+            loadDrugData();
+        }
+
+        private void deleteDrug(ActionEvent event) {
+            Drug selectedDrug = drugsTable.getSelectionModel().getSelectedItem();
+            drugName=selectedDrug.getDrugName();
+             unitPrice=selectedDrug.getUnitPrice();
+            numOfUnits=selectedDrug.getNumOfUnits();
+             description=selectedDrug.getDescription();
+             supplierName=selectedDrug.getSupplier();
+
+            if (selectedDrug != null) {
+                // Delete the drug from the database
+                try (Connection conn = dbConnection.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement("UPDATE drugs SET Deleted = 1 WHERE drugID = ?")) {
+                    stmt.setInt(1, selectedDrug.getDrugID());
+                    stmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                // Remove the drug from the table
+                drugList.remove(selectedDrug);
+                drugsTable.getItems().remove(selectedDrug);
+//            InventoryController.refreshDrugTable();
+
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "Hey";
+        }
+    }
+
+
+
+    @FXML
+    private void undoDeleteButtonClicked(ActionEvent event) {
+UndoManager undoMan =new UndoManager();
+undoMan.undo(event);
+    }
+
+
+
+
     // Switch Screens
     @FXML
     private Stage stage;
@@ -519,5 +573,39 @@ else if (!phoneNumValidator(customerPhoneNo)){
         Matcher matcher = pattern.matcher(number);
         return matcher.matches();
     }
+
+
+
+    private void removeSupplierDb() {
+        String sql = "DELETE FROM Suppliers WHERE id = (SELECT MAX(id) FROM Suppliers)";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+
+
+
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeDrugFromDb() {
+
+        String sql = "DELETE FROM Drugs WHERE id = (SELECT MAX(id) FROM Drugs)";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+
+
+
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }}
 
 }
