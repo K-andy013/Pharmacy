@@ -220,8 +220,8 @@ public class SalesController implements Initializable {
 
 
 
-    @FXML
-    private void handleUndoDeleteButton(ActionEvent event) {
+//    @FXML
+//    private void handleUndoDeleteButton(ActionEvent event) {
 //        Drug selectedDrug = drugsTable.getSelectionModel().getSelectedItem();
 //        if (selectedDrug == null) {
 //            // Delete the drug from the database
@@ -238,7 +238,7 @@ public class SalesController implements Initializable {
 //            drugList.add(selectedDrug);
 //            drugsTable.getItems().add(selectedDrug);
 //        }
-    }
+//    }
 
 
 

@@ -140,3 +140,17 @@ Date and Time: 2024-07-25
 Customer ID: 22
 Quantity: 9
 
+Purchase ID: 28
+Drug ID: 29
+Price Sold: 5.6
+Date and Time: 2024-07-26
+Customer ID: 23
+Quantity: 2
+
+Purchase ID: 29
+Drug ID: 28
+Price Sold: 10.0
+Date and Time: 2024-07-26
+Customer ID: 24
+Quantity: 1
+
