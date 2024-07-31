@@ -157,33 +157,6 @@ public class InventoryController implements Initializable {
             drugsTable.refresh();
     }
 
-//    @FXML
-//    private void addButtonClicked(ActionEvent event) {
-//        String drugName = drugNameField.getText();
-//        double unitPrice = Double.parseDouble(unitPriceField.getText());
-//        int numOfUnits = Integer.parseInt(numOfUnitsField.getText());
-//        String description = descriptionField.getText();
-//        String supplierName = supplierNameField.getText();
-//        String supplierLocation = supplierLocationField.getText();
-//        String supplierContactInfo = supplierContactInfoField.getText();
-//
-//        addDrugToDatabase(drugName, unitPrice, numOfUnits, description, supplierName);
-//        addSupplierToDatabase(supplierName,supplierContactInfo,supplierLocation);
-//
-//        drugNameField.clear();
-//        unitPriceField.clear();
-//        numOfUnitsField.clear();
-//        descriptionField.clear();
-//        supplierNameField.clear();
-//        supplierLocationField.clear();
-//        supplierContactInfoField.clear();
-//        supplierNameField.clear();
-//
-//        // Refresh table view
-//        loadDrugData();
-//    }
-
-
     @FXML
     /**
      // Adds drug to system and database
@@ -271,26 +244,6 @@ public class InventoryController implements Initializable {
     }
 
 
-
-//    public void writeToFile() {
-//        BufferedWriter writer = null;
-//        try {
-//            string
-//            writer = new BufferedWriter(new FileWriter("C:\\Users\\Eli\\IdeaProjects\\PharmaApp\\Sales.txt",true));
-//            writer.write(temp.toString());
-//            writer.newLine();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (writer != null) {
-//                try {
-//                    writer.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }}}
-//
-//    }
 
     /**
      // Adds drug to database
